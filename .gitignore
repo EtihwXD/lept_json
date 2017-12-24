@@ -1,0 +1,13 @@
+﻿################################################################################
+# 此 .gitignore 文件已由 Microsoft(R) Visual Studio 自动创建。
+################################################################################
+
+/leptjson/.vs/leptjson/v15/ipch
+/leptjson/.vs/leptjson/v15
+/leptjson/Debug/leptjson.tlog
+/leptjson/Debug/leptjson.exe
+/leptjson/Debug/leptjson.ilk
+/leptjson/Debug
+/leptjson/leptjson.vcxproj.filters
+/leptjson/leptjson.vcxproj
+/leptjson/leptjson.sln
