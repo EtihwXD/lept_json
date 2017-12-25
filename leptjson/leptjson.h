@@ -11,6 +11,7 @@ using LeptType = enum {
 //JSON的结构（树形）
 struct LeptValue{
   LeptType type;
+  double number;
 };
 
 //LeptParse的返回值
@@ -33,6 +34,11 @@ int LeptParse(LeptValue *v, const char *json);
 
 //访问结果，获取其类型
 LeptType LeptGetType(const LeptValue *v);
+
+//当LeptValue的type是LEPT_NUMBER时，获取存储的double值
+//接受树节点
+//返回double类型的值
+double LeptGetNumber(const LeptValue *v);  
 
 
 #endif  //LEPTJSON_H_
