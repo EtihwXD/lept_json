@@ -63,8 +63,15 @@ TEST(test_parse_number, input_numbers) {
   UnitTest(-1E-10, "-1E-10");
   UnitTest(1.234E+10, "1.234E+10");
   UnitTest(1.234E-10, "1.234E-10");
-  //UnitTest(0.0, "1e-10000");  //堆栈下溢 underflow
+
+  UnitTest(LEPT_PARSE_NUMBER_TOO_BIG, "1e-10000");  //堆栈下溢 underflow
+  LeptValue v;
+  LeptParse(&v, "1e-10000");
+  EXPECT_EQ(0.0, LeptGetNumber(&v));
+
   UnitTest(LEPT_PARSE_INVALID_VALUE, "+0");
+  UnitTest(LEPT_PARSE_INVALID_VALUE, "02");
+  UnitTest(LEPT_PARSE_INVALID_VALUE, "2.df");
   UnitTest(LEPT_PARSE_INVALID_VALUE, "+1");
   UnitTest(LEPT_PARSE_INVALID_VALUE, ".123"); 
   UnitTest(LEPT_PARSE_INVALID_VALUE, "1."); 
@@ -72,4 +79,19 @@ TEST(test_parse_number, input_numbers) {
   UnitTest(LEPT_PARSE_INVALID_VALUE, "inf");
   UnitTest(LEPT_PARSE_INVALID_VALUE, "NAN");
   UnitTest(LEPT_PARSE_INVALID_VALUE, "nan");
+  //边界值测试
+  //最小的数
+  UnitTest(1.0000000000000002, "1.0000000000000002");
+  // minimum denormal
+  UnitTest(4.9406564584124654e-324, "4.9406564584124654e-324");
+  UnitTest(-4.9406564584124654e-324, "-4.9406564584124654e-324");
+  //Max subnormal double
+  UnitTest(2.2250738585072009e-308, "2.2250738585072009e-308"); 
+  UnitTest(-2.2250738585072009e-308, "-2.2250738585072009e-308");
+  //Min normal positive double
+  UnitTest(2.2250738585072014e-308, "2.2250738585072014e-308"); 
+  UnitTest(-2.2250738585072014e-308, "-2.2250738585072014e-308");
+  //Max double
+  UnitTest(1.7976931348623157e+308, "1.7976931348623157e+308");
+  UnitTest(-1.7976931348623157e+308, "-1.7976931348623157e+308");
 }
