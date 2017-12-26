@@ -20,7 +20,7 @@ inline void UnitTest(const char *json, const char *data) {
   LeptValue v;
   v.type = LEPT_NULL;
   EXPECT_EQ(LEPT_PARSE_OK, LeptParse(&v, json));
-  EXPECT_EQ(*data,*LeptGetString(&v));
+  ASSERT_STREQ(data,LeptGetString(&v));
   //EXPECT_EQ(LEPT_STRING, LeptGetType(&v));
 }
 
@@ -40,6 +40,7 @@ TEST(test_parse_root_not_singular, input_null_ws_x) {
 TEST(test_parse_null, input_null) {
   UnitTest(LEPT_PARSE_OK, " null ");
   //EXPECT_EQ(LEPT_NULL, LeptGetType(&v));
+
 }
 
 TEST(test_parse_true, input_true) {
@@ -104,6 +105,40 @@ TEST(test_parse_number, input_numbers) {
   UnitTest(-1.7976931348623157e+308, "-1.7976931348623157e+308");
 }
 
+TEST(test_parse_get_boolean, input_string) {
+  LeptValue v;
+  LeptParse(&v, "null");
+  EXPECT_EQ(LEPT_NULL, LeptGetBoolean(&v));
+  LeptSetBoolean(&v, LEPT_TRUE);
+  EXPECT_EQ(1, LeptGetBoolean(&v));
+  LeptSetBoolean(&v, LEPT_FALSE);
+  EXPECT_EQ(0, LeptGetBoolean(&v));
+}
+
 TEST(test_parse_string, input_string) {
   UnitTest("\"sdfsdf\"","sdfsdf");
+  UnitTest("\"\\\"\"", "\"");
+  UnitTest("\" \"", " ");
+  UnitTest("\"\\\\\"", "\\");
+  UnitTest("\"\/\"", "/");
+  UnitTest("\"\\b\"", "\b");
+  UnitTest("\"\\f\"", "\f");
+  UnitTest("\"\\n\"", "\n");
+  UnitTest("\"\\r\"", "\r");
+  UnitTest("\"\\t\"", "\t");
+}
+
+TEST(test_parse_invalid_string_escape, input_invalid_string_escap) {
+  LeptValue v;
+  EXPECT_EQ(LEPT_PARSE_INVALID_STRING_ESCAPE, LeptParse(&v, "\"\\v\""));
+  EXPECT_EQ(LEPT_PARSE_INVALID_STRING_ESCAPE, LeptParse(&v, "\"\\'\""));
+  EXPECT_EQ(LEPT_PARSE_INVALID_STRING_ESCAPE, LeptParse(&v, "\"\\0\""));
+  EXPECT_EQ(LEPT_PARSE_INVALID_STRING_ESCAPE, LeptParse(&v, "\"\\x12\""));
+}
+
+TEST(test_parse_invalid_string_char, input_invalid_string_char) {
+  LeptValue v;
+  EXPECT_EQ(LEPT_PARSE_INVALID_STRING_CHAR, LeptParse(&v, "\"\x01\""));
+  EXPECT_EQ(LEPT_PARSE_INVALID_STRING_CHAR, LeptParse(&v, "\"\x1F\""));
+
 }
