@@ -126,6 +126,7 @@ TEST(test_parse_string, input_string) {
   UnitTest("\"\\n\"", "\n");
   UnitTest("\"\\r\"", "\r");
   UnitTest("\"\\t\"", "\t");
+  UnitTest("\"\u00d0\"", "?");
 }
 
 TEST(test_parse_invalid_string_escape, input_invalid_string_escap) {
