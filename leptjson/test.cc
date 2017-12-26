@@ -16,6 +16,14 @@ inline void UnitTest(double number, const char *json) {
   EXPECT_EQ(number, LeptGetNumber(&v));
 }
 
+inline void UnitTest(const char *json, const char *data) {
+  LeptValue v;
+  v.type = LEPT_NULL;
+  EXPECT_EQ(LEPT_PARSE_OK, LeptParse(&v, json));
+  EXPECT_EQ(*data,*LeptGetString(&v));
+  //EXPECT_EQ(LEPT_STRING, LeptGetType(&v));
+}
+
 TEST(test_parse_expect_value , input_whitespace) {
   UnitTest(LEPT_PARSE_EXPECT_VALUE, "");
   UnitTest(LEPT_PARSE_EXPECT_VALUE, " ");
@@ -94,4 +102,8 @@ TEST(test_parse_number, input_numbers) {
   //Max double
   UnitTest(1.7976931348623157e+308, "1.7976931348623157e+308");
   UnitTest(-1.7976931348623157e+308, "-1.7976931348623157e+308");
+}
+
+TEST(test_parse_string, input_string) {
+  UnitTest("\"sdfsdf\"","sdfsdf");
 }
