@@ -143,3 +143,35 @@ TEST(test_parse_invalid_string_char, input_invalid_string_char) {
   EXPECT_EQ(LEPT_PARSE_INVALID_STRING_CHAR, LeptParse(&v, "\"\x1F\""));
 
 }
+
+TEST(test_parse_array, input_array) {
+  LeptValue v;
+  v.type = LEPT_NULL;
+  EXPECT_EQ(LEPT_PARSE_OK, LeptParse(&v, "[null, false, true, 123, \"abc\"]"));
+  EXPECT_EQ(5, LeptGetArraySize(&v));
+  EXPECT_EQ(LEPT_NULL, LeptGetArrayElement(&v,0)->type);
+  EXPECT_EQ(LEPT_FALSE, LeptGetArrayElement(&v, 1)->type);
+  EXPECT_EQ(LEPT_TRUE, LeptGetArrayElement(&v, 2)->type);
+  EXPECT_EQ(LEPT_NUMBER, LeptGetArrayElement(&v, 3)->type);
+  EXPECT_EQ(LEPT_STRING, LeptGetArrayElement(&v, 4)->type);
+  EXPECT_EQ(123, LeptGetArrayElement(&v, 3)->number);
+  EXPECT_STREQ("abc", LeptGetArrayElement(&v, 4)->str.string);
+
+  EXPECT_EQ(LEPT_PARSE_OK, 
+    LeptParse(&v, "[ [ ] , [ 0 ] , [ 0 , 1 ] , [ 0 , 1 , 2 ] ]"));
+  EXPECT_EQ(4, LeptGetArraySize(&v));
+  EXPECT_EQ(LEPT_ARRAY, LeptGetArrayElement(&v, 0)->type);
+  EXPECT_EQ(LEPT_ARRAY, LeptGetArrayElement(&v, 1)->type);
+  EXPECT_EQ(LEPT_ARRAY, LeptGetArrayElement(&v, 2)->type);
+  EXPECT_EQ(LEPT_ARRAY, LeptGetArrayElement(&v, 3)->type);
+  EXPECT_EQ(0, LeptGetArrayElement(&v, 0)->arr.size);
+  EXPECT_EQ(1, LeptGetArrayElement(&v, 1)->arr.size);
+  EXPECT_EQ(0, LeptGetArrayElement(&v, 1)->arr.e[0].number);
+  EXPECT_EQ(0, LeptGetArrayElement(&v, 3)->arr.e[0].number);
+  EXPECT_EQ(1, LeptGetArrayElement(&v, 3)->arr.e[1].number);
+  EXPECT_EQ(2, LeptGetArrayElement(&v, 3)->arr.e[2].number);
+
+  EXPECT_EQ(LEPT_PARSE_MISS_COMMA_OR_SQUARE_BRACKET, LeptParse(&v, "[1"));
+  EXPECT_EQ(LEPT_PARSE_INVALID_VALUE, LeptParse(&v, "[1,]"));
+  EXPECT_EQ(LEPT_PARSE_INVALID_VALUE, LeptParse(&v, "[\"a\", nul]"));
+}

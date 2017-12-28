@@ -52,6 +52,7 @@ int LeptParse(LeptValue *v, const char *json);
 //访问结果，获取其类型
 LeptType LeptGetType(const LeptValue *v);
 
+//Boolean的get
 int LeptGetBoolean(const LeptValue* v);
 void LeptSetBoolean(LeptValue* v, int b);
 
@@ -61,8 +62,13 @@ void LeptSetBoolean(LeptValue* v, int b);
 double LeptGetNumber(const LeptValue *v);  
 void LeptSetNumber(LeptValue *v, double n);
 
+//string的get
 const char* LeptGetString(const LeptValue* v);
 size_t LeptGetStringLength(const LeptValue* v);
 void LeptSetString(LeptValue* v, const char* s, size_t len);
+
+//array的get
+size_t LeptGetArraySize(const LeptValue *v);
+LeptValue* LeptGetArrayElement(const LeptValue *v, size_t index);
 
 #endif  //LEPTJSON_H_
