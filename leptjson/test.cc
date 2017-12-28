@@ -1,6 +1,10 @@
 #include "stdafx.h"
 #include "leptjson.h"
 #include <gtest/gtest.h>
+#ifdef _WINDOWS
+#define _CRTDBG_MAP_ALLOC
+#include <crtdbg.h>
+#endif
 
 //将会大量重复的代码写进函数以供调用
 inline void UnitTest(int error, const char *json) {
@@ -174,4 +178,13 @@ TEST(test_parse_array, input_array) {
   EXPECT_EQ(LEPT_PARSE_MISS_COMMA_OR_SQUARE_BRACKET, LeptParse(&v, "[1"));
   EXPECT_EQ(LEPT_PARSE_INVALID_VALUE, LeptParse(&v, "[1,]"));
   EXPECT_EQ(LEPT_PARSE_INVALID_VALUE, LeptParse(&v, "[\"a\", nul]"));
+}
+
+int main(int argc, char **argv) {
+#ifdef _WINDOWS
+  _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
+#endif
+
+  ::testing::InitGoogleTest(&argc, argv);
+  return RUN_ALL_TESTS();
 }
