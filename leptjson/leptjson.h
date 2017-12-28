@@ -14,11 +14,15 @@ using LeptType = enum {
 struct LeptValue{
   LeptType type;
   union {
-    double number;
-    struct {
+    double number;  //存储number类型
+    struct {        //存储string类型
       char *string;
-      size_t length;
+      size_t length;    //存储字符数
     }str;
+    struct {        //存储array类型
+      LeptValue *e;     //并非链表，是数组
+      size_t size;      //存储元素的个数
+    }arr;
   };
 };
 
@@ -31,7 +35,8 @@ enum {
   LEPT_PARSE_NUMBER_TOO_BIG,
   LEPT_PARSE_MISS_QUOTATION_MARK,
   LEPT_PARSE_INVALID_STRING_ESCAPE,
-  LEPT_PARSE_INVALID_STRING_CHAR
+  LEPT_PARSE_INVALID_STRING_CHAR,
+  LEPT_PARSE_MISS_COMMA_OR_SQUARE_BRACKET
 };
 
 //API
