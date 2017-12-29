@@ -192,84 +192,84 @@ TEST(test_parse_array, input_array) {
   EXPECT_EQ(LEPT_PARSE_INVALID_VALUE, LeptParse(&v, "[\"a\", nul]"));
   LeptFree(&v);
 }
-//
-//TEST(test_parse_object, input_object) {
-//  LeptValue v;
-//  size_t i;
-//  v.type = LEPT_NULL;
-//
-//  EXPECT_EQ(LEPT_PARSE_OK, LeptParse(&v, " { } "));
-//  EXPECT_EQ(0, LeptGetObjectSize(&v));
-//  LeptFree(&v);
-//
-//  EXPECT_EQ(LEPT_PARSE_OK, LeptParse(&v,
-//    " { "
-//    "\"n\" : null , "
-//    "\"f\" : false , "
-//    "\"t\" : true , "
-//    "\"i\" : 123 , "
-//    "\"s\" : \"abc\", "
-//    "\"a\" : [ 1, 2, 3 ],"
-//    "\"o\" : { \"1\" : 1, \"2\" : 2, \"3\" : 3 }"
-//    " } "
-//  ));
-//  EXPECT_EQ(7, LeptGetObjectSize(&v));
-//  EXPECT_STREQ("n", LeptGetObjectKey(&v, 0));
-//  EXPECT_STREQ("f", LeptGetObjectKey(&v, 1));
-//  EXPECT_STREQ("t", LeptGetObjectKey(&v, 2));
-//  EXPECT_STREQ("i", LeptGetObjectKey(&v, 3));
-//  EXPECT_EQ(123.0, LeptGetNumber(&LeptGetObjectValue(&v, 3)));
-//  EXPECT_STREQ("s", LeptGetObjectKey(&v, 4));
-//  EXPECT_STREQ("abc", LeptGetString(&LeptGetObjectValue(&v, 4)));
-//  EXPECT_STREQ("a", LeptGetObjectKey(&v, 5));
-//  EXPECT_EQ(3, LeptGetArraySize(&LeptGetObjectValue(&v, 5)));
-//  for (i = 0; i < 3; i++) {
-//    LeptValue* e = LeptGetArrayElement(&LeptGetObjectValue(&v, 5), i);
-//    EXPECT_EQ(i + 1.0, LeptGetNumber(e));
-//  }
-//  EXPECT_STREQ("o", LeptGetObjectKey(&v, 6));
-//  {
-//    LeptValue* o = &LeptGetObjectValue(&v, 6);
-//    for (i = 0; i < 3; i++) {
-//      LeptValue* ov = &LeptGetObjectValue(o, i);
-//      EXPECT_TRUE('1' + i == LeptGetObjectKey(o, i)[0]);
-//      EXPECT_EQ(1, LeptGetObjectKeyLength(o, i));
-//      EXPECT_EQ(i + 1.0, LeptGetNumber(ov));
-//    }
-//  }
-//  LeptFree(&v);
-//}
-//
-//TEST(test_parse_miss_key, input_object_miss_key) {
-//  UnitTest(LEPT_PARSE_MISS_KEY, "{:1,");
-//  UnitTest(LEPT_PARSE_MISS_KEY, "{1:1,");
-//  UnitTest(LEPT_PARSE_MISS_KEY, "{true:1,");
-//  UnitTest(LEPT_PARSE_MISS_KEY, "{false:1,");
-//  UnitTest(LEPT_PARSE_MISS_KEY, "{null:1,");
-//  UnitTest(LEPT_PARSE_MISS_KEY, "{[]:1,");
-//  UnitTest(LEPT_PARSE_MISS_KEY, "{{}:1,");
-//  UnitTest(LEPT_PARSE_MISS_KEY, "{\"a\":1,");
-//}
-//
-//TEST(test_parse_miss_colon, input_boject_miss_colon) {
-//    UnitTest(LEPT_PARSE_MISS_COLON, "{\"a\"}");
-//    UnitTest(LEPT_PARSE_MISS_COLON, "{\"a\",\"b\"}");
-//}
-//
-//TEST(test_parse_miss_comma_or_curly_bracket, miss_comma_or_curly_bracket) {
-//  UnitTest(LEPT_PARSE_MISS_COMMA_OR_CURLY_BRACKET, "{\"a\":1");
-//  UnitTest(LEPT_PARSE_MISS_COMMA_OR_CURLY_BRACKET, "{\"a\":1]");
-//  UnitTest(LEPT_PARSE_MISS_COMMA_OR_CURLY_BRACKET, "{\"a\":1 \"b\"");
-//  UnitTest(LEPT_PARSE_MISS_COMMA_OR_CURLY_BRACKET, "{\"a\":{}");
-//  UnitTest(LEPT_PARSE_MISS_COMMA_OR_CURLY_BRACKET, "{\"a\":{} \"a\":{}");
-//}
+
+TEST(test_parse_object, input_object) {
+  LeptValue v;
+  size_t i;
+  v.type = LEPT_NULL;
+
+  EXPECT_EQ(LEPT_PARSE_OK, LeptParse(&v, " { } "));
+  EXPECT_EQ(0, LeptGetObjectSize(&v));
+  LeptFree(&v);
+
+  EXPECT_EQ(LEPT_PARSE_OK, LeptParse(&v,
+    " { "
+    "\"n\" : null , "
+    "\"f\" : false , "
+    "\"t\" : true , "
+    "\"i\" : 123 , "
+    "\"s\" : \"abc\", "
+    "\"a\" : [ 1, 2, 3 ],"
+    "\"o\" : { \"1\" : 1, \"2\" : 2, \"3\" : 3 }"
+    " } "
+  ));
+  EXPECT_EQ(7, LeptGetObjectSize(&v));
+  EXPECT_STREQ("n", LeptGetObjectKey(&v, 0));
+  EXPECT_STREQ("f", LeptGetObjectKey(&v, 1));
+  EXPECT_STREQ("t", LeptGetObjectKey(&v, 2));
+  EXPECT_STREQ("i", LeptGetObjectKey(&v, 3));
+  EXPECT_EQ(123.0, LeptGetNumber(&LeptGetObjectValue(&v, 3)));
+  EXPECT_STREQ("s", LeptGetObjectKey(&v, 4));
+  EXPECT_STREQ("abc", LeptGetString(&LeptGetObjectValue(&v, 4)));
+  EXPECT_STREQ("a", LeptGetObjectKey(&v, 5));
+  EXPECT_EQ(3, LeptGetArraySize(&LeptGetObjectValue(&v, 5)));
+  for (i = 0; i < 3; i++) {
+    LeptValue* e = LeptGetArrayElement(&LeptGetObjectValue(&v, 5), i);
+    EXPECT_EQ(i + 1.0, LeptGetNumber(e));
+  }
+  EXPECT_STREQ("o", LeptGetObjectKey(&v, 6));
+  {
+    LeptValue* o = &LeptGetObjectValue(&v, 6);
+    for (i = 0; i < 3; i++) {
+      LeptValue* ov = &LeptGetObjectValue(o, i);
+      EXPECT_TRUE('1' + i == LeptGetObjectKey(o, i)[0]);
+      EXPECT_EQ(1, LeptGetObjectKeyLength(o, i));
+      EXPECT_EQ(i + 1.0, LeptGetNumber(ov));
+    }
+  }
+  LeptFree(&v);
+}
+
+TEST(test_parse_miss_key, input_object_miss_key) {
+  UnitTest(LEPT_PARSE_MISS_KEY, "{:1,");
+  UnitTest(LEPT_PARSE_MISS_KEY, "{1:1,");
+  UnitTest(LEPT_PARSE_MISS_KEY, "{true:1,");
+  UnitTest(LEPT_PARSE_MISS_KEY, "{false:1,");
+  UnitTest(LEPT_PARSE_MISS_KEY, "{null:1,");
+  UnitTest(LEPT_PARSE_MISS_KEY, "{[]:1,");
+  UnitTest(LEPT_PARSE_MISS_KEY, "{{}:1,");
+  UnitTest(LEPT_PARSE_MISS_KEY, "{\"a\":1,");
+}
+
+TEST(test_parse_miss_colon, input_boject_miss_colon) {
+    UnitTest(LEPT_PARSE_MISS_COLON, "{\"a\"}");
+    UnitTest(LEPT_PARSE_MISS_COLON, "{\"a\",\"b\"}");
+}
+
+TEST(test_parse_miss_comma_or_curly_bracket, miss_comma_or_curly_bracket) {
+  UnitTest(LEPT_PARSE_MISS_COMMA_OR_CURLY_BRACKET, "{\"a\":1");
+  UnitTest(LEPT_PARSE_MISS_COMMA_OR_CURLY_BRACKET, "{\"a\":1]");
+  UnitTest(LEPT_PARSE_MISS_COMMA_OR_CURLY_BRACKET, "{\"a\":1 \"b\"");
+  UnitTest(LEPT_PARSE_MISS_COMMA_OR_CURLY_BRACKET, "{\"a\":{}");
+  UnitTest(LEPT_PARSE_MISS_COMMA_OR_CURLY_BRACKET, "{\"a\":{} \"a\":{}");
+}
 
 int main(int argc, char **argv) {
   ::testing::InitGoogleTest(&argc, argv);
 
 #ifdef CHECK_MEMORY_LEAKS
   _CrtSetDbgFlag(_CrtSetDbgFlag(_CRTDBG_REPORT_FLAG) | _CRTDBG_LEAK_CHECK_DF);
-  //_CrtSetBreakAlloc(657);
+  //_CrtSetBreakAlloc(1920);
 #endif 
   return RUN_ALL_TESTS();
 }
