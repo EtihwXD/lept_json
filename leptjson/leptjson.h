@@ -10,6 +10,7 @@ using LeptType = enum {
   LEPT_STRING, LEPT_ARRAY, LEPT_OBJECT
 };
 
+struct LeptMember;
 //JSON的结构（树形）
 struct LeptValue{
   LeptType type;
@@ -23,7 +24,17 @@ struct LeptValue{
       LeptValue *e;     //并非链表，是数组
       size_t size;      //存储元素的个数
     }arr;
+    struct {        //存储object类型
+      LeptMember *m;
+      size_t size;
+    }obj;
   };
+};
+
+struct LeptMember {
+  char *key;
+  size_t klen;  //因为key的字符串里可能有\u0000，所以要记录key的长度
+  LeptValue v;
 };
 
 //LeptParse的返回值
@@ -36,7 +47,10 @@ enum {
   LEPT_PARSE_MISS_QUOTATION_MARK,
   LEPT_PARSE_INVALID_STRING_ESCAPE,
   LEPT_PARSE_INVALID_STRING_CHAR,
-  LEPT_PARSE_MISS_COMMA_OR_SQUARE_BRACKET
+  LEPT_PARSE_MISS_COMMA_OR_SQUARE_BRACKET,
+  LEPT_PARSE_MISS_KEY,
+  LEPT_PARSE_MISS_COLON,
+  LEPT_PARSE_MISS_COMMA_OR_CURLY_BRACKET
 };
 
 //API
@@ -51,6 +65,9 @@ int LeptParse(LeptValue *v, const char *json);
 
 //访问结果，获取其类型
 LeptType LeptGetType(const LeptValue *v);
+
+//销毁申请来的内存
+void LeptFree(LeptValue *v);
 
 //Boolean的get
 int LeptGetBoolean(const LeptValue* v);
@@ -70,5 +87,11 @@ void LeptSetString(LeptValue* v, const char* s, size_t len);
 //array的get
 size_t LeptGetArraySize(const LeptValue *v);
 LeptValue* LeptGetArrayElement(const LeptValue *v, size_t index);
+
+//object的get
+size_t LeptGetObjectSize(const LeptValue *v);
+const char* LeptGetObjectKey(const LeptValue *v, size_t index);
+size_t LeptGetObjectKeyLength(const LeptValue *v, size_t index);
+LeptValue LeptGetObjectValue(const LeptValue *v, size_t index);
 
 #endif  //LEPTJSON_H_
