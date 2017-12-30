@@ -1,5 +1,5 @@
 # lept_json
-学习 Milo Yip 老师的《从零开始的 JSON 库教程》所写的json库
+学习 Milo Yip 老师的《从零开始的 JSON 库教程》所写的json库，算是习作，虽然不是完全独立写出来的，但也受益良多
 - 包含符合标准的 JSON 解析器和生成器
 - 教程使用标准C语言（C89），本项目使用C++语言（C++ 11），但在关键代码的实现上无甚差别。
 - 代码风格： Google Cpp StyleGuide

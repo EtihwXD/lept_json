@@ -39,7 +39,9 @@ inline void UnitTestGenerate(const char *json ){
   LeptValue v;
   v.type = LEPT_NULL;
   LeptParse(&v, json);
-  ASSERT_STREQ(json, LeptGenerate(&v,0));
+  char *res = LeptGenerate(&v, 0);
+  ASSERT_STREQ(json, res);
+  free(res);
   LeptFree(&v);
 }
 
@@ -146,6 +148,7 @@ TEST(test_parse_string, input_string) {
   UnitTest("\"\\r\"", "\r");
   UnitTest("\"\\t\"", "\t");
   UnitTest("\"\u00d0\"", "?");
+  UnitTest("\"Hello\\u0000World\"", "Hello\\u0000World");
 }
 
 TEST(test_parse_invalid_string_escape, input_invalid_string_escap) {
@@ -314,9 +317,9 @@ TEST(test_generate_number, input_number) {
 TEST(test_generate_string, input_string) {
   UnitTestGenerate("\"\"");
   UnitTestGenerate("\"Hello\"");
-  //UnitTestGenerate("\"Hello\\nWorld\"");
-  //UnitTestGenerate("\"\\\" \\\\ / \\b \\f \\n \\r \\t\"");
-  //UnitTestGenerate("\"Hello\\u0000World\"");
+  UnitTestGenerate("\"Hello\\nWorld\"");
+  UnitTestGenerate("\"\\\" \\\\ / \\b \\f \\n \\r \\t\"");
+  UnitTestGenerate("\"Hello\\u0000World\"");
 }
 
 TEST(test_generate_array, input_array) {
@@ -336,7 +339,7 @@ int main(int argc, char **argv) {
 
 #ifdef CHECK_MEMORY_LEAKS
   _CrtSetDbgFlag(_CrtSetDbgFlag(_CRTDBG_REPORT_FLAG) | _CRTDBG_LEAK_CHECK_DF);
-  //_CrtSetBreakAlloc(1920);
+  //_CrtSetBreakAlloc(2412);
 #endif 
   return RUN_ALL_TESTS();
 }
