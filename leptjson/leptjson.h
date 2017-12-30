@@ -94,4 +94,9 @@ const char* LeptGetObjectKey(const LeptValue *v, size_t index);
 size_t LeptGetObjectKeyLength(const LeptValue *v, size_t index);
 LeptValue LeptGetObjectValue(const LeptValue *v, size_t index);
 
+//json生成器
+//接受json成员（树的根节点）和json的长度（可选，传入null可忽略此参数）
+//返回生成的json字符串，不做格式化，因为格式化应该由用户自己完成
+char* LeptGenerate(const LeptValue *v, size_t *length);
+
 #endif  //LEPTJSON_H_

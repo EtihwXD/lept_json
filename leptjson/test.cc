@@ -35,6 +35,14 @@ inline void UnitTest(const char *json, const char *data) {
   LeptFree(&v);
 }
 
+inline void UnitTestGenerate(const char *json ){
+  LeptValue v;
+  v.type = LEPT_NULL;
+  LeptParse(&v, json);
+  ASSERT_STREQ(json, LeptGenerate(&v,0));
+  LeptFree(&v);
+}
+
 TEST(test_parse_expect_value , input_whitespace) {
   UnitTest(LEPT_PARSE_EXPECT_VALUE, "");
   UnitTest(LEPT_PARSE_EXPECT_VALUE, " ");
@@ -131,7 +139,7 @@ TEST(test_parse_string, input_string) {
   UnitTest("\"\\\"\"", "\"");
   UnitTest("\" \"", " ");
   UnitTest("\"\\\\\"", "\\");
-  UnitTest("\"\/\"", "/");
+  UnitTest("\"\\/\"", "/");
   UnitTest("\"\\b\"", "\b");
   UnitTest("\"\\f\"", "\f");
   UnitTest("\"\\n\"", "\n");
@@ -167,7 +175,7 @@ TEST(test_parse_array, input_array) {
   EXPECT_EQ(LEPT_NUMBER, LeptGetArrayElement(&v, 3)->type);
   EXPECT_EQ(LEPT_STRING, LeptGetArrayElement(&v, 4)->type);
   EXPECT_EQ(123, LeptGetArrayElement(&v, 3)->number);
-  EXPECT_STREQ("abc", LeptGetArrayElement(&v, 4)->str.string);
+  ASSERT_STREQ("abc", LeptGetArrayElement(&v, 4)->str.string);
   LeptFree(&v);
 
   EXPECT_EQ(LEPT_PARSE_OK, 
@@ -214,20 +222,20 @@ TEST(test_parse_object, input_object) {
     " } "
   ));
   EXPECT_EQ(7, LeptGetObjectSize(&v));
-  EXPECT_STREQ("n", LeptGetObjectKey(&v, 0));
-  EXPECT_STREQ("f", LeptGetObjectKey(&v, 1));
-  EXPECT_STREQ("t", LeptGetObjectKey(&v, 2));
-  EXPECT_STREQ("i", LeptGetObjectKey(&v, 3));
+  ASSERT_STREQ("n", LeptGetObjectKey(&v, 0));
+  ASSERT_STREQ("f", LeptGetObjectKey(&v, 1));
+  ASSERT_STREQ("t", LeptGetObjectKey(&v, 2));
+  ASSERT_STREQ("i", LeptGetObjectKey(&v, 3));
   EXPECT_EQ(123.0, LeptGetNumber(&LeptGetObjectValue(&v, 3)));
-  EXPECT_STREQ("s", LeptGetObjectKey(&v, 4));
-  EXPECT_STREQ("abc", LeptGetString(&LeptGetObjectValue(&v, 4)));
-  EXPECT_STREQ("a", LeptGetObjectKey(&v, 5));
+  ASSERT_STREQ("s", LeptGetObjectKey(&v, 4));
+  ASSERT_STREQ("abc", LeptGetString(&LeptGetObjectValue(&v, 4)));
+  ASSERT_STREQ("a", LeptGetObjectKey(&v, 5));
   EXPECT_EQ(3, LeptGetArraySize(&LeptGetObjectValue(&v, 5)));
   for (i = 0; i < 3; i++) {
     LeptValue* e = LeptGetArrayElement(&LeptGetObjectValue(&v, 5), i);
     EXPECT_EQ(i + 1.0, LeptGetNumber(e));
   }
-  EXPECT_STREQ("o", LeptGetObjectKey(&v, 6));
+  ASSERT_STREQ("o", LeptGetObjectKey(&v, 6));
   {
     LeptValue* o = &LeptGetObjectValue(&v, 6);
     for (i = 0; i < 3; i++) {
@@ -263,6 +271,65 @@ TEST(test_parse_miss_comma_or_curly_bracket, miss_comma_or_curly_bracket) {
   UnitTest(LEPT_PARSE_MISS_COMMA_OR_CURLY_BRACKET, "{\"a\":{}");
   UnitTest(LEPT_PARSE_MISS_COMMA_OR_CURLY_BRACKET, "{\"a\":{} \"a\":{}");
 }
+
+TEST(t, i) {
+  LeptValue v;
+  v.type = LEPT_NULL;
+  LeptGenerate(&v, 0);
+}
+
+TEST(test_generate, input_generate) {
+  UnitTestGenerate("null");
+  UnitTestGenerate("true");
+  UnitTestGenerate("false");
+  UnitTestGenerate("12345");
+  UnitTestGenerate("\"abc\"");
+  UnitTestGenerate("{\"12\":12}");
+  UnitTestGenerate("[12,34]");
+}
+
+TEST(test_generate_number, input_number) {
+  UnitTestGenerate("0");
+  UnitTestGenerate("-0");
+  UnitTestGenerate("1");
+  UnitTestGenerate("-1");
+  UnitTestGenerate("1.5");
+  UnitTestGenerate("-1.5");
+  UnitTestGenerate("3.25");
+  UnitTestGenerate("1e+20");
+  UnitTestGenerate("1.234e+20");
+  UnitTestGenerate("1.234e-20");
+
+  UnitTestGenerate("1.0000000000000002"); /* the smallest number > 1 */
+  UnitTestGenerate("4.9406564584124654e-324"); /* minimum denormal */
+  UnitTestGenerate("-4.9406564584124654e-324");
+  UnitTestGenerate("2.2250738585072009e-308");  /* Max subnormal double */
+  UnitTestGenerate("-2.2250738585072009e-308");
+  UnitTestGenerate("2.2250738585072014e-308");  /* Min normal positive double */
+  UnitTestGenerate("-2.2250738585072014e-308");
+  UnitTestGenerate("1.7976931348623157e+308");  /* Max double */
+  UnitTestGenerate("-1.7976931348623157e+308");
+}
+
+TEST(test_generate_string, input_string) {
+  UnitTestGenerate("\"\"");
+  UnitTestGenerate("\"Hello\"");
+  //UnitTestGenerate("\"Hello\\nWorld\"");
+  //UnitTestGenerate("\"\\\" \\\\ / \\b \\f \\n \\r \\t\"");
+  //UnitTestGenerate("\"Hello\\u0000World\"");
+}
+
+TEST(test_generate_array, input_array) {
+  UnitTestGenerate("[]");
+  UnitTestGenerate("[null,false,true,123,\"abc\",[1,2,3]]");
+}
+
+TEST(test_generate_object, input_object) {
+  UnitTestGenerate("{}");
+  UnitTestGenerate("{\"n\":null,\"f\":false,\"t\":true,\"i\":123,\"s\":\"abc\",\"a\":[1,2,3],\"o\":{\"1\":1,\"2\":2,\"3\":3}}");
+}
+
+
 
 int main(int argc, char **argv) {
   ::testing::InitGoogleTest(&argc, argv);
